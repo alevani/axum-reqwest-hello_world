@@ -805,6 +805,8 @@ dependencies = [
  "axum",
  "axum-macros",
  "dotenv",
+ "hyper",
+ "hyper-tls",
  "reqwest",
  "serde",
  "serde_json",
