@@ -1,6 +1,6 @@
 use axum::extract::State;
 
-use crate::{errors::AppError, Envs};
+use crate::{errors::AppError, states::Envs};
 
 pub(crate) async fn example(
     State(envs): State<Envs>,

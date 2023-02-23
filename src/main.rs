@@ -1,44 +1,20 @@
 use api::example;
 use axum::{routing::get, Router};
-use axum_macros::FromRef;
-
 use std::net::SocketAddr;
-
-#[derive(Clone, Debug)]
-pub struct Envs {}
-
-#[derive(Clone, FromRef)]
-struct AppState {
-    http_client: reqwest::Client,
-    envs: Envs,
-}
 
 pub mod api;
 pub mod errors;
+pub mod states;
 
 #[tokio::main]
 async fn main() {
     dotenv::dotenv().ok();
 
-    // Retrive all necessary environment variables
-    let envs = Envs {};
-
-    let reqwest_client = reqwest::Client::builder()
-        .timeout(std::time::Duration::from_secs(5))
-        .connection_verbose(true)
-        .build()
-        .expect("Could not create reqwest client");
-
-    let states = AppState {
-        envs,
-        http_client: reqwest_client,
-    };
-
     // build our application with a route
     let app = Router::new()
         .route("/", get(ping))
         .route("/example", get(example))
-        .with_state(states);
+        .with_state(states::new().await);
 
     // run our app with hyper
     // `axum::Server` is a re-export of `hyper::Server`
