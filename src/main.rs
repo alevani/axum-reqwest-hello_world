@@ -1,6 +1,6 @@
 use api::example;
 use axum::{routing::get, Router};
-use std::net::SocketAddr;
+use tokio::net::TcpListener;
 
 pub mod api;
 pub mod errors;
@@ -18,10 +18,8 @@ async fn main() {
 
     // run our app with hyper
     // `axum::Server` is a re-export of `hyper::Server`
-    let addr = SocketAddr::from(([127, 0, 0, 1], 8080));
-
-    axum::Server::bind(&addr)
-        .serve(app.into_make_service())
+    let tcp_listener = TcpListener::bind("0.0.0.0:8080").await.unwrap();
+    axum::serve(tcp_listener, app.into_make_service())
         .await
         .unwrap();
 }
